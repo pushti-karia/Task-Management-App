@@ -10,6 +10,7 @@ const features = [
   { icon: '💬', title: 'Task Comments', desc: 'Discuss tasks with your team directly in context' },
 ];
 
+
 const LandingPage = () => (
   <div className="min-h-screen bg-slate-950 text-white">
     {/* Navbar */}
