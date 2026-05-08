@@ -14,14 +14,27 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
+// Allowed origins
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:3000',
+  'https://task-mngmnt-app.vercel.app',
+].filter(Boolean);
+
 // Socket.io
 const io = new Server(server, {
-  cors: { origin: process.env.CLIENT_URL || 'http://localhost:3000', methods: ['GET', 'POST'] },
+  cors: { origin: allowedOrigins, methods: ['GET', 'POST'] },
 });
 setupSocket(io);
 
 // Middleware
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) callback(null, true);
+    else callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 if (process.env.NODE_ENV !== 'production') app.use(morgan('dev'));
